@@ -96,7 +96,7 @@ variable "environment_privileged_mode" {
 
 variable "environment_certificate" {
   type        = string
-  description = "The ARN of the AWS Certificate Manager (ACM) certificate for the build project. Only valid when using an HTTPS or SSH connection type."
+  description = "The ARN of the AWS Certificate Manager certificate for the build project. Only valid when using an HTTPS or SSH connection type."
   default     = null
 }
 
@@ -145,7 +145,3 @@ variable "logs_config_cloudwatch_logs" {
   description = "Information about Amazon CloudWatch Logs for a build project. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project#cloudwatch_logs"
   default     = {}
 }
-
-
-
-
