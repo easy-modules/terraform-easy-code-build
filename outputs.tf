@@ -9,6 +9,6 @@ output "aws_codebuild_project_arn" {
 }
 
 output "aws_codebuild_project_id" {
-  value       =  aws_codebuild_project.this.id
+  value       = aws_codebuild_project.this.id
   description = "value of the id attribute of the aws_codebuild_project resource"
 }
