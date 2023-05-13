@@ -1,0 +1,49 @@
+version: 0.2
+
+env:
+  shell: bash
+  parameter-store:
+    TORCH_NETWORKS_GH_TOKEN: /TORCH_GITHUB_TOKEN
+  exported-variables:
+    - GIT_COMMIT
+  variables:
+    ECR_URL: "${env.ECR_URL}"
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      docker: 20
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login --no-include-email --region $AWS_REGION | bash
+  build:
+    commands:
+      # Clone the infrastructure repository
+      - GIT_COMMIT=${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - echo ${ECR_URL}
+      - git clone https://${TORCH_NETWORKS_GH_TOKEN}@github.com/Torch-Networks/Infrastructure.git
+      # Access the cloned repository directory
+      - echo Build started on `date`
+      - echo Building the Eclipse Server project...
+      - mvn clean package
+      # Build the Docker image
+      - docker build -t eclipse-service-dev -f Infrastructure/services/ecomm/dev/configuration-service/container/Dockerfile .
+      # TODO: This is a hack to get the git commit hash into the image tag (REMOVE ME, I'M ON VARIABLES)
+      #
+      # Tag the Docker image with the build number
+      - docker tag eclipse-service-dev:latest ${ECR_URL}:${GIT_COMMIT}
+      # Push the Docker image to ECR
+      - docker push ${ECR_URL}:${GIT_COMMIT}
+      - pip3 install yq
+      - yq -Y -i ".image.tag |= \"${GIT_COMMIT}\"" Infrastructure/services/ecomm/dev/eclipse-service/k8s/charts/values.yaml
+      # Push Helm chart changes to Infrastructure repository
+      # - cat Infrastructure/services/ecomm/dev/eclipse-service/k8s/charts/values.yaml
+      - cd Infrastructure
+      - git config --global user.email "tmaior@tmaior.com"
+      - git config --global credential.helper '!f() { echo "username=${TORCH_NETWORKS_GH_TOKEN}"; echo "password=x-oauth-basic"; }; f'
+      - git pull origin main
+      - git add .
+      - git commit -m "helm/values.yaml tag ${GIT_COMMIT:0:6}"
+      - git push origin main

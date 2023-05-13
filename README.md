@@ -1,15 +1,42 @@
+# Terraform easy modules
+
+Terraform module to deploy Codebuild
+
+## Usage
+
+```hcl
+  codepipeline_enabled           = false
+  cloudwatch_logs_enabled        = true
+  source_type                    = "GITHUB"
+  stage                          = "dev"
+  type_project                   = "easy_modules"
+  build_timeout                  = "20"
+  queue_timeout                  = "10"
+  buildspec_path                 = "buildspec.yaml"
+  source_credentials_server_type = "GITHUB"
+  repository_url                 = "https://github.com/easy-modules/terraform-easy-code-build.git"
+  environment_type               = "LINUX_CONTAINER"
+  environment_privileged_mode    = false
+  environment_compute_type       = "BUILD_GENERAL1_SMALL"
+  
+  tags = {
+    "Environment" = "dev"
+  }
+    
+```
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 4.67.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.57.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.67.0 |
 
 ## Modules
 
@@ -19,42 +46,48 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_codebuild_project.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
+| [aws_cloudwatch_log_group.app](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/resources/cloudwatch_log_group) | resource |
+| [aws_codebuild_project.codebuild](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/resources/codebuild_project) | resource |
+| [aws_codebuild_source_credential.source_credential](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/resources/codebuild_source_credential) | resource |
+| [aws_iam_role.assume_role](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.iam_role_policy](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/resources/iam_role_policy) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.assume_role](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.codebuild_policy_document](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/data-sources/iam_policy_document) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/4.67.0/docs/data-sources/region) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_artifacts_type"></a> [artifacts\_type](#input\_artifacts\_type) | The type of build output artifact. Valid values are: CODEPIPELINE, NO\_ARTIFACTS, S3 | `string` | `"NO_ARTIFACTS"` | no |
-| <a name="input_build_timeout"></a> [build\_timeout](#input\_build\_timeout) | The number of minutes a build is allowed to be queued before it times out. | `string` | `"20"` | no |
-| <a name="input_cache_modes"></a> [cache\_modes](#input\_cache\_modes) | A list of cache modes. Valid values are: LOCAL\_DOCKER\_LAYER\_CACHE, LOCAL\_SOURCE\_CACHE, LOCAL\_CUSTOM\_CACHE | `list(string)` | <pre>[<br>  "LOCAL_SOURCE_CACHE"<br>]</pre> | no |
-| <a name="input_cache_type"></a> [cache\_type](#input\_cache\_type) | The type of cache used by the build project. Valid values are: LOCAL, NO\_CACHE, S3 | `string` | `"LOCAL"` | no |
-| <a name="input_codebuild_tags"></a> [codebuild\_tags](#input\_codebuild\_tags) | Additional tags for the CodeBuild project | `map(string)` | `{}` | no |
-| <a name="input_environment_certificate"></a> [environment\_certificate](#input\_environment\_certificate) | The ARN of the AWS Certificate Manager certificate for the build project. Only valid when using an HTTPS or SSH connection type. | `string` | `null` | no |
-| <a name="input_environment_compute_type"></a> [environment\_compute\_type](#input\_environment\_compute\_type) | The type of compute environment to use for the build project. Valid values are: BUILD\_GENERAL1\_SMALL, BUILD\_GENERAL1\_MEDIUM, BUILD\_GENERAL1\_LARGE | `string` | `"BUILD_GENERAL1_SMALL"` | no |
-| <a name="input_environment_image"></a> [environment\_image](#input\_environment\_image) | The image tag or image digest that identifies the Docker image to use for this build project. Use the following formats: For an image tag: registry/repository:tag. For an image digest: registry/repository@digest. The Docker image used for your AWS CodeBuild build project must be in the same AWS Region as the build project. Additionally, you must use the full registry and repository URI. For example, you must use registry.hub.docker.com/library/ubuntu instead of ubuntu. | `string` | `"aws/codebuild/amazonlinux2-x86_64-standard:4.0"` | no |
-| <a name="input_environment_image_pull_credentials_type"></a> [environment\_image\_pull\_credentials\_type](#input\_environment\_image\_pull\_credentials\_type) | The type of credentials AWS CodeBuild uses to pull images in your build. Valid values are: CODEBUILD, SERVICE\_ROLE | `string` | `"CODEBUILD"` | no |
-| <a name="input_environment_privileged_mode"></a> [environment\_privileged\_mode](#input\_environment\_privileged\_mode) | Enable this flag to run the Docker daemon inside a Docker container. This value must be set to true only if the build project is used to build Docker images, and the specified build environment image is not one provided by AWS CodeBuild with Docker support. Otherwise, all associated builds that attempt to interact with the Docker daemon will fail. | `bool` | `true` | no |
-| <a name="input_environment_type"></a> [environment\_type](#input\_environment\_type) | The type of build environment to use for related builds. Valid values are: ARM\_CONTAINER, LINUX\_CONTAINER, LINUX\_GPU\_CONTAINER, WINDOWS\_CONTAINER, WINDOWS\_SERVER\_2019\_CONTAINER | `string` | `"LINUX_CONTAINER"` | no |
-| <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | A map of environment variable objects that are available to builds for this build project. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project#environment_variable | `map(string)` | `{}` | no |
-| <a name="input_git_submodules_config_fetch_submodules"></a> [git\_submodules\_config\_fetch\_submodules](#input\_git\_submodules\_config\_fetch\_submodules) | Set to true to fetch Git submodules for your AWS CodeBuild build project. | `bool` | `true` | no |
-| <a name="input_logs_config_cloudwatch_logs"></a> [logs\_config\_cloudwatch\_logs](#input\_logs\_config\_cloudwatch\_logs) | Information about Amazon CloudWatch Logs for a build project. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project#cloudwatch_logs | `map(any)` | `{}` | no |
-| <a name="input_name"></a> [name](#input\_name) | Codebuild Name to be used on all the resources as identifier | `string` | `""` | no |
-| <a name="input_queued_timeout"></a> [queued\_timeout](#input\_queued\_timeout) | The number of minutes a queue is allowed to be queued before it times out. | `string` | `"10"` | no |
-| <a name="input_registry_credential"></a> [registry\_credential](#input\_registry\_credential) | A map of registry credential objects that contain credentials for access to a private registry. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project#registry_credential | `map(any)` | `{}` | no |
-| <a name="input_resource_access_role"></a> [resource\_access\_role](#input\_resource\_access\_role) | The ARN of the IAM role that enables AWS CodeBuild to interact with dependent AWS services on behalf of the AWS account. | `string` | `""` | no |
-| <a name="input_service_role"></a> [service\_role](#input\_service\_role) | The ARN of the IAM role that enables AWS CodeBuild to interact with dependent AWS services on behalf of the AWS account. | `string` | n/a | yes |
-| <a name="input_source_buildspec"></a> [source\_buildspec](#input\_source\_buildspec) | The contents of a buildspec file. This value overrides a buildspec file created with the source\_version or source\_identifier parameter. For more information, see Buildspec File Name and Storage Location. | `string` | n/a | yes |
-| <a name="input_source_git_clone_depth"></a> [source\_git\_clone\_depth](#input\_source\_git\_clone\_depth) | The Git clone depth for the build project. Valid values are: 0 to 3000 | `number` | `1` | no |
-| <a name="input_source_location"></a> [source\_location](#input\_source\_location) | Information about the location of the source code to be built. | `string` | n/a | yes |
-| <a name="input_source_type"></a> [source\_type](#input\_source\_type) | The type of repository that contains the source code to be built. Valid values are: CODECOMMIT, CODEPIPELINE, GITHUB, GITHUB\_ENTERPRISE, NO\_SOURCE, S3, BITBUCKET, GITHUB\_ENTERPRISE\_SERVER | `string` | `"GITHUB"` | no |
-| <a name="input_stage"></a> [stage](#input\_stage) | Stage, e.g. 'prod', 'staging', 'dev' | `string` | `"default"` | no |
-| <a name="input_type_project"></a> [type\_project](#input\_type\_project) | Type of project, e.g. 'app', 'infra', 'data', 'ml' | `string` | `"demo"` | no |
+| <a name="input_build_timeout"></a> [build\_timeout](#input\_build\_timeout) | (optional) value of the build timeout | `string` | `"20"` | no |
+| <a name="input_buildspec_path"></a> [buildspec\_path](#input\_buildspec\_path) | (required) value of the buildspec path | `string` | `""` | no |
+| <a name="input_cloudwatch_logs_enabled"></a> [cloudwatch\_logs\_enabled](#input\_cloudwatch\_logs\_enabled) | (optional) value of the cloudwatch logs | `bool` | `false` | no |
+| <a name="input_codepipeline_enabled"></a> [codepipeline\_enabled](#input\_codepipeline\_enabled) | (optional) value of the codepipeline enabled | `bool` | `false` | no |
+| <a name="input_environment_compute_type"></a> [environment\_compute\_type](#input\_environment\_compute\_type) | (optional) value of the environment compute type | `string` | `"BUILD_GENERAL1_SMALL"` | no |
+| <a name="input_environment_image"></a> [environment\_image](#input\_environment\_image) | (optional) value of the environment image | `string` | `"aws/codebuild/amazonlinux2-x86_64-standard:4.0"` | no |
+| <a name="input_environment_image_pull_credentials_type"></a> [environment\_image\_pull\_credentials\_type](#input\_environment\_image\_pull\_credentials\_type) | (optional) value of the environment image pull credentials type | `string` | `"CODEBUILD"` | no |
+| <a name="input_environment_privileged_mode"></a> [environment\_privileged\_mode](#input\_environment\_privileged\_mode) | (optional) value of the environment privileged mode | `bool` | `"true"` | no |
+| <a name="input_environment_type"></a> [environment\_type](#input\_environment\_type) | (optional) value of the environment type | `string` | `"LINUX_CONTAINER"` | no |
+| <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | (optional) value of the environment variable | `map(string)` | <pre>{<br>  "TERRAFORM": "true"<br>}</pre> | no |
+| <a name="input_git_clone_depth"></a> [git\_clone\_depth](#input\_git\_clone\_depth) | (optional) value of the git clone depth | `number` | `1` | no |
+| <a name="input_iam_role_arn"></a> [iam\_role\_arn](#input\_iam\_role\_arn) | (optional) value of the arn | `string` | `""` | no |
+| <a name="input_queue_timeout"></a> [queue\_timeout](#input\_queue\_timeout) | (optional) value of the queue timeout | `string` | `"10"` | no |
+| <a name="input_repository_url"></a> [repository\_url](#input\_repository\_url) | (optional) value of the repository name | `string` | `"https://github.com/easy-modules/terraform-easy-code-build.git"` | no |
+| <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | (optional) value of the retention in days | `number` | `30` | no |
+| <a name="input_source_credentials_auth_type"></a> [source\_credentials\_auth\_type](#input\_source\_credentials\_auth\_type) | (optional) value of the auth type | `string` | `"PERSONAL_ACCESS_TOKEN"` | no |
+| <a name="input_source_credentials_server_type"></a> [source\_credentials\_server\_type](#input\_source\_credentials\_server\_type) | (optional) value of the server type | `string` | `"GITHUB"` | no |
+| <a name="input_source_credentials_token"></a> [source\_credentials\_token](#input\_source\_credentials\_token) | (optional) set token if source\_type is different of 'NO\_SOURCE' | `string` | `"your-token-here"` | no |
+| <a name="input_source_type"></a> [source\_type](#input\_source\_type) | (optional) value of the source type - CODEPIPELINE \|\| GITHUB \|\| BITBUCKET \|\| S3 \|\| NO\_SOURCE | `string` | `"GITHUB"` | no |
+| <a name="input_stage"></a> [stage](#input\_stage) | (optional) DEV \|\| PROD \|\| TEST | `string` | `"dev"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (optional) tags for the resources | `map(string)` | `{}` | no |
+| <a name="input_type_project"></a> [type\_project](#input\_type\_project) | (optional) value of the project | `string` | `"demo"` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aws_codebuild_project_arn"></a> [aws\_codebuild\_project\_arn](#output\_aws\_codebuild\_project\_arn) | value of the arn attribute of the aws\_codebuild\_project resource |
-| <a name="output_aws_codebuild_project_id"></a> [aws\_codebuild\_project\_id](#output\_aws\_codebuild\_project\_id) | value of the id attribute of the aws\_codebuild\_project resource |
-| <a name="output_aws_codebuild_project_name"></a> [aws\_codebuild\_project\_name](#output\_aws\_codebuild\_project\_name) | value of the name attribute of the aws\_codebuild\_project resource |
+| <a name="output_aws_cloudwatch_log_group_arn"></a> [aws\_cloudwatch\_log\_group\_arn](#output\_aws\_cloudwatch\_log\_group\_arn) | The ARN of the CloudWatch log group |
+| <a name="output_codebuild_project_arn"></a> [codebuild\_project\_arn](#output\_codebuild\_project\_arn) | The ARN of the CodeBuild project |
+| <a name="output_codebuild_project_id"></a> [codebuild\_project\_id](#output\_codebuild\_project\_id) | The ID of the CodeBuild project |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
