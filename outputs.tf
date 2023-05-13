@@ -1,14 +1,14 @@
-output "aws_codebuild_project_name" {
-  value       = aws_codebuild_project.this.name
-  description = "value of the name attribute of the aws_codebuild_project resource"
+output "aws_cloudwatch_log_group_arn" {
+  description = "The ARN of the CloudWatch log group"
+  value       = aws_cloudwatch_log_group.app[*].arn
 }
 
-output "aws_codebuild_project_arn" {
-  value       = aws_codebuild_project.this.arn
-  description = "value of the arn attribute of the aws_codebuild_project resource"
+output "codebuild_project_arn" {
+  description = "The ARN of the CodeBuild project"
+  value       = aws_codebuild_project.codebuild[*].arn
 }
 
-output "aws_codebuild_project_id" {
-  value       = aws_codebuild_project.this.id
-  description = "value of the id attribute of the aws_codebuild_project resource"
+output "codebuild_project_id" {
+  description = "The ID of the CodeBuild project"
+  value       = aws_codebuild_project.codebuild[*].id
 }
