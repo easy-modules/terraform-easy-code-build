@@ -5,6 +5,9 @@ Terraform module to deploy Codebuild
 ## Usage
 
 ```hcl
+module "codebuild" {
+  source = "easy-modules/code-build/easy"
+
   codepipeline_enabled           = false
   cloudwatch_logs_enabled        = true
   source_type                    = "GITHUB"
@@ -18,11 +21,11 @@ Terraform module to deploy Codebuild
   environment_type               = "LINUX_CONTAINER"
   environment_privileged_mode    = false
   environment_compute_type       = "BUILD_GENERAL1_SMALL"
-  
+
   tags = {
     "Environment" = "dev"
   }
-    
+}
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -90,4 +93,6 @@ No modules.
 | <a name="output_aws_cloudwatch_log_group_arn"></a> [aws\_cloudwatch\_log\_group\_arn](#output\_aws\_cloudwatch\_log\_group\_arn) | The ARN of the CloudWatch log group |
 | <a name="output_codebuild_project_arn"></a> [codebuild\_project\_arn](#output\_codebuild\_project\_arn) | The ARN of the CodeBuild project |
 | <a name="output_codebuild_project_id"></a> [codebuild\_project\_id](#output\_codebuild\_project\_id) | The ID of the CodeBuild project |
+| <a name="output_codebuild_project_name"></a> [codebuild\_project\_name](#output\_codebuild\_project\_name) | The name of the CodeBuild project |
+| <a name="output_codebuild_project_tags"></a> [codebuild\_project\_tags](#output\_codebuild\_project\_tags) | The ARN of the CodeBuild project's |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
